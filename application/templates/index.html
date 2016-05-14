@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="zh-cn" ng-app="express-manage">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>首页</title>
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
-<body>
-
+<body ng-controller="AppCtrl as app">
+    <div id="wrapper" ui-view></div>
+    <script src="{{ url_for('static', filename='dist/app.js') }}"></script>
 </body>
 </html>
