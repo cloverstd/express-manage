@@ -3,11 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>首页</title>
+    <title></title>
+    <script>
+        window.config = {
+            baseUrl: '{{ config.get('SITE_DOMAIN') }}'
+        }
+    </script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/app.css') }}">
 </head>
 <body ng-controller="AppCtrl as app">
-    <div id="wrapper" ui-view></div>
+    <div ng-include="app.tpls.navbar" ng-controller="NavCtrl as nav"></div>
+    <div class="container">
+        <div ui-view></div>
+    </div>
     <script src="{{ url_for('static', filename='dist/app.js') }}"></script>
 </body>
 </html>

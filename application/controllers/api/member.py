@@ -17,16 +17,31 @@ class Member(AuthResource):
     def get(self):
         member_schema = schemas.MemberSchema(exclude=("password",))
 
-        return member_schema.dump(current_user).data
+        return tool.success(member_schema.dump(current_user).data)
+
+    def put(self):
+        self.parser.add_argument('name', type=unicode)
+        self.parser.add_argument('password', type=unicode)
+
+        args = self.parser.parse_args()
+        if args.name:
+            current_user.name = args.name
+        if args.password:
+            current_user.password = args.password
+
+        current_user.save()
+        member_schema = schemas.MemberSchema(exclude=("password",))
+
+        return tool.success(member_schema.dump(current_user).data)
 
 
 class Store(AuthResource):
 
     def get(self, store_id):
         store = current_user.stores.filter_by(id=store_id).first_or_404()
-        store_schema = schemas.StoreSchema()
+        store_schema = schemas.StoreSchema(exclude=('users',))
 
-        return store_schema.dump(store).data
+        return tool.success(store_schema.dump(store).data)
 
     def put(self, store_id):
         self.parser.add_argument('name', type=unicode)
@@ -39,7 +54,7 @@ class Store(AuthResource):
             store.remark = params['remark']
         store.save()
 
-        result = schemas.StoreSchema().dump(store)
+        result = schemas.StoreSchema(exclude=('users',)).dump(store)
         return tool.success(result.data)
 
     def delete(self, store_id):
@@ -62,7 +77,7 @@ class StoreList(AuthResource):
         args = self.parser.parse_args()
         per_page = args['per_page'] if args['per_page'] <= 100 else 100
         paginate = current_user.stores.paginate(args['page'], per_page)
-        store_schema = schemas.StoreSchema(many=True)
+        store_schema = schemas.StoreSchema(many=True, exclude=('users',))
         result = store_schema.dump(paginate.items)
         return tool.success({
             "items": result.data,

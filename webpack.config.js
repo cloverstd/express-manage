@@ -11,7 +11,7 @@ var basePath = {
 }
 
 var config = {
-    devtool: 'source-map',
+    devtool: '#inline-source-map',
     entry: {
         app: [
             path.resolve(__dirname, basePath.src + '/app.js')
@@ -23,7 +23,7 @@ var config = {
     },
     plugins: [
         // new optimize.CommonsChunkPlugin(basePath.dist + '/app/app.js'),
-        new ExtractTextPlugin(basePath.dist + '/app.css'),
+        new ExtractTextPlugin('app.css'),
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",
@@ -44,7 +44,11 @@ var config = {
             },
             {
                 test: /\.tpl/,
-                loader: 'html'
+                loader: 'ngtemplate!html'
+            },
+            {
+                test: /\.less$/,
+                loader: ExtractTextPlugin.extract('style', 'css!less')
             },
         ]
     }

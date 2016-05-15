@@ -13,21 +13,22 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li><a href="#">今日快递</a></li>
-        <li><a href="#">历史快递</a></li>
-        <li><a href="#">快递统计</a></li>
-        <li><a href="#">录入快递</a></li>
+      <ul class="nav navbar-nav" ng-if="current_user">
+        <li><a>今日快递</a></li>
+        <li><a>历史快递</a></li>
+        <li><a>到件录单</a></li>
+        <li><a>快递统计</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">我的商铺</a></li>
-        <li class="dropdown" uib-dropdown>
-          <a uib-dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">管理员 <span class="caret"></span></a>
+        <li ng-if="current_user" ui-sref-active-eq="active"><a ui-sref="store.list">我的店铺</a></li>
+        <li ng-if="!current_user" ui-sref-active-eq="member.signIn"><a ui-sref="member.signIn">登录</a></li>
+        <li class="dropdown" uib-dropdown ng-if="current_user">
+          <a uib-dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{current_user.name}} <span class="caret"></span></a>
           <ul class="dropdown-menu" uib-dropdown-menu>
-            <li><a href="#">系统设置</a></li>
-            <li><a href="#">修改密码</a></li>
+            <li><a>系统设置</a></li>
+            <li><a>修改密码</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">登出</a></li>
+            <li><a ui-sref="member.signOut">登出</a></li>
           </ul>
         </li>
       </ul>

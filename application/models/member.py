@@ -27,7 +27,6 @@ class Member(db.Model, BaseModel):
     name = db.Column(db.String(50))
     password = db.Column(db.String(128), nullable=False)
 
-
     @property
     def url(self):
         return url_for('member', id=self.id)
