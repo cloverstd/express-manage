@@ -18,6 +18,7 @@ import {
     AppCtrl,
     NavCtrl,
 } from './app.controller'
+import AlertCtrl from './modules/alert/controller'
 
 import AppRouter from './app.router'
 
@@ -25,6 +26,7 @@ import AppRouter from './app.router'
 
 import HTTPService from './service/http'
 import AuthService from './service/auth'
+import AlertService from './service/alert'
 
 // modules
 
@@ -38,14 +40,14 @@ export default angular
         Member.name,
         Store.name,
     ])
-    .run(($rootScope, $state, authService) => {
+    .run(['$rootScope', '$state', 'authService', ($rootScope, $state, authService) => {
         $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
             if (toState.authenticate && !authService.isAuthenticated()){
                 $state.transitionTo("member.signIn");
                 event.preventDefault();
             }
         });
-    })
+    }])
     .constant('AUTH_EVENTS', {
         loginSuccess: 'auth.login.success',
         loginFailed: 'auth.login.failed',
@@ -57,6 +59,8 @@ export default angular
     .config(AppRouter)
     .controller('AppCtrl', AppCtrl)
     .controller('NavCtrl', NavCtrl)
+    .controller('AlertCtrl', AlertCtrl)
 
 register('express-manage')
 .factory('authService', AuthService)
+.factory('alertService', AlertService)

@@ -3,6 +3,9 @@
  */
 
 import storeTpl from './tpl/store.tpl'
+import storeAddTpl from './tpl/store.add.tpl'
+import storeCompanyTpl from './tpl/store.company.tpl'
+import storeCompanyAddTpl from './tpl/store.company.add.tpl'
 
 function Router($stateProvider) {
     $stateProvider
@@ -19,10 +22,8 @@ function Router($stateProvider) {
         })
         .state('store.add', {
             url: '/add',
-            controller: () => {
-                console.log('store add')
-            },
-            template: 'store add',
+            controller: 'StoreAddCtrl as vm',
+            templateUrl: storeAddTpl,
             authenticate: true
         })
         .state('store.edit', {
@@ -33,28 +34,30 @@ function Router($stateProvider) {
             template: 'store edit',
             authenticate: true
         })
-
+        .state('store.detail', {
+            url: '/{store_id:int}',
+            controller: 'StoreCompanyCtrl as vm',
+            templateUrl: storeCompanyTpl,
+            authenticate: true,
+        })
+        
         .state('store.company', {
             abstract: true,
-            url: '/{company_id:int}/company',
+            url: '/{store_id:int}/company',
             template: '<div ui-view></div>'
         })
 
         .state('store.company.list', {
             url: '',
-            controller: () => {
-                console.log('company list')
-            },
-            template: 'company list',
+            controller: 'StoreCompanyCtrl as vm',
+            templateUrl: storeCompanyTpl,
             authenticate: true
         })
 
         .state('store.company.add', {
-            url: '',
-            controller: () => {
-                console.log('company add')
-            },
-            template: 'company add',
+            url: '/add',
+            controller: 'StoreCompanyAddCtrl as vm',
+            templateUrl: storeCompanyAddTpl,
             authenticate: true
         })
 

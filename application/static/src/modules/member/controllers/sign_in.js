@@ -3,14 +3,16 @@
  */
 
 class Ctrl {
-    constructor($state, memberService, AUTH_EVENTS, $rootScope, authService) {
+    constructor($state, memberService, AUTH_EVENTS, $rootScope, authService, $scope, alertService) {
         const vm = this
         Object.assign(vm, {
             $state,
             memberService,
             AUTH_EVENTS,
             $rootScope,
-            authService
+            authService,
+            $scope,
+            alertService,
         })
         vm.init()
     }
@@ -20,6 +22,7 @@ class Ctrl {
         vm.signInForm = {}
         vm.authService.signOut()
         vm.$rootScope.$broadcast(vm.authService.logoutSuccess)
+
     }
 
     signIn() {
@@ -34,15 +37,17 @@ class Ctrl {
                     vm.$state.go('store.list')
                 } else {
                     vm.$rootScope.$broadcast(vm.AUTH_EVENTS.loginFailed)
+                    vm.alertService.danger('登录失败')
                 }
             })
             .catch((data) => {
                 console.error(data)
+                vm.alertService.danger('登录失败')
                 vm.$rootScope.$broadcast(vm.AUTH_EVENTS.loginFailed)
             })
     }
 }
 
-Ctrl.$inject = ['$state', 'memberService', 'AUTH_EVENTS', '$rootScope', 'authService']
+Ctrl.$inject = ['$state', 'memberService', 'AUTH_EVENTS', '$rootScope', 'authService', '$scope', 'alertService']
 
 export default Ctrl

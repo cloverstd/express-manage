@@ -29,11 +29,11 @@ var config = {
             "window.jQuery": "jquery"
         }),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-        // new webpack.optimize.UglifyJsPlugin({
-        //     compress: {
-        //         warnings: false
-        //     }
-        // })
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            }
+        })
     ],
     module: {
         loaders: [

@@ -68,6 +68,10 @@ class Store(db.Model, BaseModel):
     def absolute_url(self):
         return url_for('store', id=self.id, _external=True)
 
+    @property
+    def company_count(self):
+        return self.companies.count()
+
     def get_user_by_mobile(self, mobile):
 
         return self.users.filter(

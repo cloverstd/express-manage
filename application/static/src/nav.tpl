@@ -20,8 +20,8 @@
         <li><a>快递统计</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li ng-if="current_user" ui-sref-active-eq="active"><a ui-sref="store.list">我的店铺</a></li>
-        <li ng-if="!current_user" ui-sref-active-eq="member.signIn"><a ui-sref="member.signIn">登录</a></li>
+        <li ng-if="current_user" ui-sref-active="active"><a ui-sref="store.list">我的店铺</a></li>
+        <li ng-if="!current_user" ui-sref-active="active"><a ui-sref="member.signIn">登录</a></li>
         <li class="dropdown" uib-dropdown ng-if="current_user">
           <a uib-dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{current_user.name}} <span class="caret"></span></a>
           <ul class="dropdown-menu" uib-dropdown-menu>

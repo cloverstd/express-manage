@@ -22,6 +22,10 @@ class Store extends HTTPService {
         })
     }
 
+    storePost(data) {
+        return this.post(this.url.store, data)
+    }
+
     storeGet(store_id) {
         return this.get(`${this.url.store}/${store_id}`)
     }
@@ -34,7 +38,7 @@ class Store extends HTTPService {
         return this.del(`${this.url.store}/${store_id}`)
     }
 
-    companyList(page, per_page) {
+    companyList(store_id, page, per_page) {
         page = page || 1
         per_page = per_page || 10
         return this.get(`${this.url.store}/${store_id}/company`, {
@@ -53,6 +57,10 @@ class Store extends HTTPService {
 
     companyDel(store_id, company_id) {
         return this.del(`${this.url.store}/${store_id}/company/${company_id}`)
+    }
+
+    companyPost(store_id, data) {
+        return this.post(`${this.url.store}/${store_id}/company`, data)
     }
 
 }

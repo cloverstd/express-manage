@@ -16,8 +16,10 @@
 <body ng-controller="AppCtrl as app">
     <div ng-include="app.tpls.navbar" ng-controller="NavCtrl as nav"></div>
     <div class="container">
+        <div ng-include="app.tpls.alert" ng-controller="AlertCtrl as vm"></div>
         <div ui-view></div>
     </div>
+    <script src="{{ url_for('static', filename='dist/vendor.js') }}"></script>
     <script src="{{ url_for('static', filename='dist/app.js') }}"></script>
 </body>
 </html>

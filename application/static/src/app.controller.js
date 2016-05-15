@@ -1,11 +1,13 @@
 import navTpl from './nav.tpl'
+import alertTpl from './modules/alert/alert.tpl'
 
 
 class AppCtrl {
     constructor($state) {
         const vm = this
         vm.tpls = {
-            navbar: navTpl
+            navbar: navTpl,
+            alert: alertTpl,
         }
         
         console.log('hi11')

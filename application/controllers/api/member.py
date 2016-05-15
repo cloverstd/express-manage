@@ -39,7 +39,7 @@ class Store(AuthResource):
 
     def get(self, store_id):
         store = current_user.stores.filter_by(id=store_id).first_or_404()
-        store_schema = schemas.StoreSchema(exclude=('users',))
+        store_schema = schemas.StoreSchema(exclude=('users', 'companies'))
 
         return tool.success(store_schema.dump(store).data)
 
@@ -54,7 +54,7 @@ class Store(AuthResource):
             store.remark = params['remark']
         store.save()
 
-        result = schemas.StoreSchema(exclude=('users',)).dump(store)
+        result = schemas.StoreSchema(exclude=('users', 'companies')).dump(store)
         return tool.success(result.data)
 
     def delete(self, store_id):
@@ -77,7 +77,7 @@ class StoreList(AuthResource):
         args = self.parser.parse_args()
         per_page = args['per_page'] if args['per_page'] <= 100 else 100
         paginate = current_user.stores.paginate(args['page'], per_page)
-        store_schema = schemas.StoreSchema(many=True, exclude=('users',))
+        store_schema = schemas.StoreSchema(many=True, exclude=('users', 'companies'))
         result = store_schema.dump(paginate.items)
         return tool.success({
             "items": result.data,
@@ -88,7 +88,7 @@ class StoreList(AuthResource):
         result = schemas.StoreSchema().load(request.get_json())
         current_user.stores.append(result.data)
         current_user.save()
-        return tool.success(schemas.StoreSchema().dump(result.data).data)
+        return tool.success(schemas.StoreSchema(exclude=('users', 'companies')).dump(result.data).data)
 
 
 class StoreCompany(AuthResource):
@@ -157,7 +157,8 @@ class StoreCompanyList(AuthResource):
         data = request.get_json()
         data['store_id'] = store.id
         result = schemas.CompanySchema().load(data)
-
-        db.session.add(result.data)
+        company = result.data
+        company.store = store
+        db.session.add(company)
         db.session.commit()
         return tool.success(schemas.CompanySchema(exclude=("orders",)).dump(result.data))
