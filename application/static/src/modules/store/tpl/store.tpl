@@ -28,9 +28,11 @@
                             <td>{{store.created_at}}</td>
                             <td>
                                 <div class="btn-group btn-group-xs">
+                                    <a ui-sref="order.add({store_id: store.id})" class="btn btn-primary" ng-if="store.company_count">到件录单</a>
+                                    <a class="btn btn-primary" ng-if="!store.company_count" disabled="">到件录单</a>
                                     <a class="btn btn-info" ui-sref="store.detail({store_id: store.id})">查看详情</a>
                                     <a class="btn btn-warning" ng-click="vm.openEdit(store)">修改</a>
-                                    <a class="btn btn-danger" ng-click="vm.store.del(store)">删除</a>
+                                    <a class="btn btn-danger" ng-click="vm.store.del(store)" ng-disabled="store.company_count">删除</a>
                                 </div>
                             </td>
                         </tr>

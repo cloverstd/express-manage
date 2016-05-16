@@ -21,9 +21,9 @@ class Order(db.Model, BaseModel):
             order_by="desc(Order.created_at)"
         )
     )
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship(
-        'User',
+    user_name_id = db.Column(db.Integer, db.ForeignKey('user_name.id'))
+    user_name = db.relationship(
+        'UserName',
         backref=db.backref(
             'orders',
             lazy="dynamic",
@@ -35,6 +35,14 @@ class Order(db.Model, BaseModel):
     remark = db.Column(db.String(500))
 
     plan_at = db.Column(db.DateTime)  # 计划领取时间
+
+    @property
+    def user(self):
+        return {
+            'id': self.user_name.user.id,
+            'name': self.user_name.name,
+            'mobile': self.user_name.user.mobile
+        }
 
     # 状态
     #  0 -- 到达

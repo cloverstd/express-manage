@@ -14,7 +14,7 @@ var config = {
         app: [
             path.resolve(__dirname, basePath.src + '/app.js')
         ],
-        vendor: ['angular', 'jquery', 'angular-ui-router', 'angular-ui-bootstrap']
+        vendor: ['jquery', 'moment', 'angular', 'angular-i18n/angular-locale_ZH-CN.js', 'angular-ui-router', 'angular-ui-bootstrap']
     },
     output: {
         path: basePath.dist,
@@ -22,11 +22,14 @@ var config = {
     },
     plugins: [
         // new optimize.CommonsChunkPlugin(basePath.dist + '/app/app.js'),
+        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /zh-cn/),
         new ExtractTextPlugin('app.css'),
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",
-            "window.jQuery": "jquery"
+            "window.jQuery": "jquery",
+            // "window.moment": "moment/moment.js",
+            // Moment: "moment/moment.js",
         }),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
         // new webpack.optimize.UglifyJsPlugin({
@@ -54,6 +57,10 @@ var config = {
             {
                 test: /\.less$/,
                 loader: ExtractTextPlugin.extract('style', 'css!less')
+            },
+            {
+                test: require.resolve('moment'),
+                loader: 'expose?moment'
             },
         ]
     }

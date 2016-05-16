@@ -66,9 +66,10 @@ class UserList(AuthResource):
         self.parser.add_argument('name', type=unicode, location="args")
         args = self.parser.parse_args()
         store = current_user.stores.filter_by(id=store_id).first()
+
         if not store:
             return tool.fail(400, u"店铺不存在")
-        order_query = models.User.query
+        order_query = models.User.query.filter(models.User.store == store)
 
         if args.mobile:
             order_query = order_query.filter(

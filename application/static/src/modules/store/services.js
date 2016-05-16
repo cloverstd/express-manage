@@ -38,13 +38,17 @@ class Store extends HTTPService {
         return this.del(`${this.url.store}/${store_id}`)
     }
 
-    companyList(store_id, page, per_page) {
+    companyList(store_id, page, per_page, all) {
         page = page || 1
         per_page = per_page || 10
-        return this.get(`${this.url.store}/${store_id}/company`, {
-            page: page,
-            per_page: per_page
-        })
+        const params = {
+            page: page || 1,
+            per_page: per_page || 10
+        }
+        if (all) {
+            params.all = true
+        }
+        return this.get(`${this.url.store}/${store_id}/company`, params)
     }
 
     companyGet(store_id, company_id) {

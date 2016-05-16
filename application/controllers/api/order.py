@@ -8,13 +8,19 @@ from application import models
 from application import schemas
 from flask.ext.jwt import jwt_required, current_identity as current_user
 from application.utils import tool, lib
+from sqlalchemy import or_
 
 
 class OrderNo(AuthResource):
 
-    def get(self):
-        order_query = models.Order.query.filter(
+    def get(self, store_id):
+        store = current_user.stores.filter_by(id=store_id).first()
+        if not store:
+            return tool.fail(404, u"店铺不存在")
+
+        order_query = models.Order.query.join(models.Company).filter(
             models.Order.status < 10,
+            models.Company.store == store,
         ).order_by(models.Order.no)
         all_no = [i.no for i in order_query]
         if not all_no:
@@ -32,19 +38,34 @@ class OrderNo(AuthResource):
 
 class Order(AuthResource):
 
-    def get(self, order_id):
-        order = models.Order.get_by_user_id_and_order_id(current_user.id, order_id)
+    def get(self, store_id, order_id):
+        store = current_user.stores.filter_by(id=store_id).first()
+        if not store:
+            return tool.fail(404, u"店铺不存在")
+
+        order = models.Order.query.join(models.Company).filter(
+            models.Company.store == store,
+            models.Order.id == order_id
+        ).first()
+
         if not order:
             return tool.fail(404, u"快递单不存在")
         result = schemas.OrderSchema().dump(order)
         return tool.success(result.data)
 
-    def put(self, order_id):
-        order = models.Order.get_by_user_id_and_order_id(current_user.id, order_id)
+    def put(self, store_id, order_id):
+        store = current_user.stores.filter_by(id=store_id).first()
+        if not store:
+            return tool.fail(404, u"店铺不存在")
+
+        order = models.Order.query.join(models.Company).filter(
+            models.Company.store == store,
+            models.Order.id == order_id
+        ).first()
         if not order:
             return tool.fail(404, u"快递单不存在")
 
-        self.parser.add_argument('company_id', type=int, help="公司必填")
+        self.parser.add_argument('company_id', type=int, help="公司")
         self.parser.add_argument('no', type=int, default=None)
         self.parser.add_argument('remark', type=unicode)
         self.parser.add_argument('status', type=int)
@@ -64,8 +85,9 @@ class Order(AuthResource):
                 return tool.fail(400, u"用户不存在")
             if order.user_id != user.id:
                 order.user_id = user.id
-        if args.no < 1:
-            return tool.fail(407, u"编号不能小于 1")
+        if args.no:
+            if args.no < 1:
+                return tool.fail(407, u"编号不能小于 1")
         if args.status:
             order.status = args.status
             order.updated_at = tool.now()
@@ -78,8 +100,15 @@ class Order(AuthResource):
         result = schemas.OrderSchema().dump(order)
         return tool.success(result.data)
 
-    def delete(self, order_id):
-        order = models.Order.get_by_user_id_and_order_id(current_user.id, order_id)
+    def delete(self, store_id, order_id):
+        store = current_user.stores.filter_by(id=store_id).first()
+        if not store:
+            return tool.fail(404, u"店铺不存在")
+
+        order = models.Order.query.join(models.Company).filter(
+            models.Company.store == store,
+            models.Order.id == order_id
+        ).first()
         if not order:
             return tool.fail(404, u"快递单不存在")
         models.db.session.delete(order)
@@ -89,7 +118,11 @@ class Order(AuthResource):
 
 class OrderList(AuthResource):
 
-    def get(self):
+    def get(self, store_id):
+        store = current_user.stores.filter_by(id=store_id).first()
+        if not store:
+            return tool.fail(404, u"店铺不存在")
+
         self.parser.add_argument('page', type=int, location="args", default=1)
         self.parser.add_argument('per_page', type=int, location="args", default=10)
         self.parser.add_argument('start_at', type=lib.arrow_datetime, help="开始时间必填", required=True, location="args")
@@ -97,14 +130,14 @@ class OrderList(AuthResource):
         self.parser.add_argument('user_id', type=int, help="用户 ID", location="args")
         self.parser.add_argument('company_id', type=int, help="公司 ID", location="args")
         self.parser.add_argument('number', type=unicode, location="args")
+        self.parser.add_argument('status', type=int, location="args", default=None)
+        self.parser.add_argument('key', type=unicode, location="args")
         args = self.parser.parse_args()
         per_page = args['per_page'] if args['per_page'] <= 100 else 100
         end_at = args.end_at or tool.now(False)
         order_query = models.Order.query.\
-            join(models.Company).\
-            join(models.Store).\
-            join(models.member_store).filter(
-                models.member_store.c.member_id == current_user.id,
+            join(models.Company).filter(
+                models.Company.store == store,
                 models.Order.created_at >= args.start_at.naive,
                 models.Order.created_at <= end_at.naive,
             )
@@ -120,7 +153,18 @@ class OrderList(AuthResource):
             order_query = order_query.filter(
                 models.Order.number.like(u'%{}%'.format(args.number))
             )
-        paginate = order_query.order_by(models.Order.created_at.desc()).paginate(
+        if args.key:
+            order_query = order_query.join(models.UserName).filter(
+                or_(
+                    models.Order.number.like(u'%{}%'.format(args.key)),
+                    models.UserName.name.like(u'%{}%'.format(args.key)),
+                )
+            )
+        if args.status is not None:
+            order_query = order_query.filter(
+                models.Order.status == args.status
+            )
+        paginate = order_query.order_by(models.Order.no, models.Order.created_at.desc()).paginate(
             args.page,
             per_page,
             False
@@ -132,7 +176,11 @@ class OrderList(AuthResource):
             "paginate": tool.paginate_to_json(paginate)
         })
 
-    def post(self):
+    def post(self, store_id):
+        store = current_user.stores.filter_by(id=store_id).first()
+        if not store:
+            return tool.fail(404, u"店铺不存在")
+
         self.parser.add_argument('company_id', type=int, required=True, help="公司必填")
         self.parser.add_argument('number', type=unicode, required=True, help="快递单号必填")
         self.parser.add_argument('no', type=int, default=None)
@@ -143,10 +191,9 @@ class OrderList(AuthResource):
         self.parser.add_argument('user', type=dict, required=True, help="用户必填")
         args = self.parser.parse_args()
 
-        company = models.Company.get_by_user_id_and_company_id(current_user.id, args.company_id)
+        company = store.companies.filter_by(id=args.company_id).first()
         if not company:
             return tool.fail(400, u"公司不存在")
-        store = company.store
         order = company.orders.filter_by(number=args.number).first()
         if order:
             return tool.fail(406, u"快递单号已存在")
@@ -156,7 +203,12 @@ class OrderList(AuthResource):
 
         if "id" in args.user:
             user = store.users.filter_by(id=args.user['id']).first()
-
+            if "user_name_id" in args.user:
+                user_name = user.names.filter_by(id=args.user['user_name_id']).first()
+                if not user_name:
+                    return tool.fail(400, u"用户名字不存在")
+            else:
+                user_name = user.names.first()
             # # 用户编号都存在时,看是否为他自己的
             # order = models.Order.query.join(models.Company).join(models.Store).filter(
             #     models.Store.id == store.id,
@@ -200,7 +252,7 @@ class OrderList(AuthResource):
             # 1 此用户已有未领取的快递时,编同一个号
             no = models.Order.get_max_no(store.id)
             order.no = no
-        order.user = user
+        order.user_name = user_name
         order.company = company
         order.number = args.number
         order.status = args.status

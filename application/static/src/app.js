@@ -2,13 +2,13 @@
  * Created by cloverstd on 16/5/14.
  */
 
-import 'angular'
+// import 'angular'
 // import 'jQuery'
-import "angular-ui-router"
-import "angular-ui-bootstrap"
+// import moment from 'moment'
+// import "angular-ui-router"
+// import "angular-ui-bootstrap"
 
 // less
-
 import './style/common.less'
 
 import register from './helpers/register'
@@ -22,16 +22,24 @@ import AlertCtrl from './modules/alert/controller'
 
 import AppRouter from './app.router'
 
+// filters
+import formatDT from './filter/formatDT'
+import formatOrderStatus from './filter/formatOrderStatus'
+
 // services
 
 import HTTPService from './service/http'
 import AuthService from './service/auth'
 import AlertService from './service/alert'
 
+// directives
+import mobileDirective from './directives/mobile'
+
 // modules
 
 import Member from './modules/member'
 import Store from './modules/store'
+import Order from './modules/order'
 
 export default angular
     .module('express-manage', [
@@ -39,6 +47,7 @@ export default angular
         'ui.bootstrap',
         Member.name,
         Store.name,
+        Order.name,
     ])
     .run(['$rootScope', '$state', 'authService', ($rootScope, $state, authService) => {
         $rootScope.$on("$stateChangeStart", function(event, toState, toParams, fromState, fromParams){
@@ -60,7 +69,10 @@ export default angular
     .controller('AppCtrl', AppCtrl)
     .controller('NavCtrl', NavCtrl)
     .controller('AlertCtrl', AlertCtrl)
+    .filter('formatDT', formatDT)
+    .filter('orderStatus', formatOrderStatus)
 
 register('express-manage')
 .factory('authService', AuthService)
 .factory('alertService', AlertService)
+.directive('mobile', mobileDirective)

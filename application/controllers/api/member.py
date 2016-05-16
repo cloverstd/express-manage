@@ -141,12 +141,16 @@ class StoreCompanyList(AuthResource):
         store = current_user.stores.filter_by(id=store_id).first_or_404()
         self.parser.add_argument('page', type=int, location="args", default=1)
         self.parser.add_argument('per_page', type=int, location="args", default=10)
+        self.parser.add_argument('all', type=unicode, location="args")
         args = self.parser.parse_args()
         per_page = args['per_page'] if args['per_page'] <= 100 else 100
 
         paginate = store.companies.paginate(args['page'], per_page)
         company_schema = schemas.CompanySchema(many=True)
-        result = company_schema.dump(paginate.items)
+        if args.all:
+            result = company_schema.dump(store.companies)
+        else:
+            result = company_schema.dump(paginate.items)
         return tool.success({
             "items": result.data,
             "paginate": tool.paginate_to_json(paginate)
