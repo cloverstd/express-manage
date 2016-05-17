@@ -21,7 +21,7 @@ class Ctrl {
         const vm = this
         vm.signInForm = {}
         vm.authService.signOut()
-        vm.$rootScope.$broadcast(vm.authService.logoutSuccess)
+        vm.$rootScope.$broadcast(vm.AUTH_EVENTS.logoutSuccess)
 
     }
 

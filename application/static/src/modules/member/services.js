@@ -22,6 +22,10 @@ class Member extends HTTPService {
     info() {
         return this.get(this.url.member)
     }
+
+    memberPut(params) {
+        return this.put(this.url.member, params)
+    }
 }
 
 export default Member

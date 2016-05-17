@@ -46,6 +46,7 @@ class NavCtrl {
 
         vm.$rootScope.$on(vm.AUTH_EVENTS.logoutSuccess, () => {
             console.log('sign out success')
+            
             vm.$rootScope.current_user = null
         })
     }

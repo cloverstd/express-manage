@@ -25,7 +25,7 @@
           <a uib-dropdown-toggle class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{current_user.name}} <span class="caret"></span></a>
           <ul class="dropdown-menu" uib-dropdown-menu>
             <li><a>系统设置</a></li>
-            <li><a>修改密码</a></li>
+            <li ui-sref-active-eq="active"><a ui-sref="member.center">个人中心</a></li>
             <li role="separator" class="divider"></li>
             <li><a ui-sref="member.signOut">登出</a></li>
           </ul>

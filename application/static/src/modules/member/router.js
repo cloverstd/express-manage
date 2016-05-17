@@ -3,6 +3,7 @@
  */
 
 import signInTpl from './tpl/sign_in.tpl'
+import centerTpl from './tpl/center.tpl'
 
 function Router($stateProvider) {
     $stateProvider
@@ -27,6 +28,13 @@ function Router($stateProvider) {
                 $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess)
             },
             authenticate: false
+        })
+
+        .state('member.center', {
+            url: '/center',
+            controller: 'CenterCtrl as vm',
+            templateUrl: centerTpl,
+            authenticate: true
         })
 }
 

@@ -22,12 +22,20 @@ class Member(AuthResource):
     def put(self):
         self.parser.add_argument('name', type=unicode)
         self.parser.add_argument('password', type=unicode)
+        self.parser.add_argument('password1', type=unicode)
+        self.parser.add_argument('password2', type=unicode)
 
         args = self.parser.parse_args()
         if args.name:
             current_user.name = args.name
-        if args.password:
-            current_user.password = args.password
+        if args.password1:
+            password2 = args.password2
+            password = args.password
+            if password2 != args.password1:
+                return tool.fail(407, '两次密码不同')
+            if not current_user.check_password(password):
+                return tool.fail(408, '原密码不正确')
+            current_user.password = password2
 
         current_user.save()
         member_schema = schemas.MemberSchema(exclude=("password",))
