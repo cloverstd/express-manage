@@ -13,13 +13,15 @@ class Store extends HTTPService {
         }
     }
 
-    storeList(page, per_page) {
-        page = page || 1
-        per_page = per_page || 10
-        return this.get(this.url.store, {
-            page: page,
-            per_page: per_page
-        })
+    storeList(page, per_page, is_default) {
+        const params = {
+            page: page || 1,
+            per_page: per_page || 10
+        }
+        if (is_default == 0 || is_default) {
+            params.default = is_default
+        }
+        return this.get(this.url.store, params)
     }
 
     storePost(data) {

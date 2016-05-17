@@ -14,7 +14,15 @@ var config = {
         app: [
             path.resolve(__dirname, basePath.src + '/app.js')
         ],
-        vendor: ['jquery', 'moment', 'angular', 'angular-i18n/angular-locale_ZH-CN.js', 'angular-ui-router', 'angular-ui-bootstrap']
+        vendor: [
+            'jquery',
+            'moment',
+            'angular',
+            'angular-i18n/angular-locale_ZH-CN.js',
+            'angular-ui-router',
+            'angular-ui-bootstrap',
+            'angular-loading-bar',
+        ]
     },
     output: {
         path: basePath.dist,

@@ -14,9 +14,8 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav" ng-if="current_user">
-        <li><a>今日快递</a></li>
-        <li><a>历史快递</a></li>
-        <li ui-sref-active="active"><a ui-sref="order.add">到件录单</a></li>
+        <li ui-sref-active-eq="active"><a ui-sref="order.list({store_id: defaultStore.id})">历史快递</a></li>
+        <li ui-sref-active-eq="active"><a ui-sref="order.add({store_id: defaultStore.id})">到件录单</a></li>
         <li><a>快递统计</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">

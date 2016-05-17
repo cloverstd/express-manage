@@ -19,10 +19,14 @@ class Ctrl {
 
     init() {
         this.store_id = this.$stateParams.store_id
+        // this.statusId = this.$stateParams.status
         this.search = {}
         this.order = {}
         this.orderInit()
-
+        // if (this.$stateParams.status) {
+        //     this.search.status_id = this.$stateParams.status
+        //     console.log('status')
+        // }
         this.companyInit()
         this.statusInit()
     }
@@ -32,6 +36,11 @@ class Ctrl {
             .then(data => {
                 this.company = data.data.items
             })
+    }
+
+    reset() {
+        this.search = {}
+        this.order.search()
     }
 
     statusInit() {
@@ -67,7 +76,9 @@ class Ctrl {
     orderInit() {
         this.order.currentPage = 1
         this.order.per_page = 100
+
         this.startAtDT = moment().subtract(1, 'month')._d
+
         this.startAtOptions = {
             maxDate: new Date(),
             formatMonth: 'MMMM',
@@ -89,7 +100,10 @@ class Ctrl {
         this.order.list = () => {
             const params = {
                 start_at: moment(this.startAtDT).format('YYYY-MM-DD 00:00:00'),
-                end_at: moment(this.endAtDT).format('YYYY-MM-DD'),
+                end_at: moment(this.endAtDT).format('YYYY-MM-DD 23:59:59'),
+            }
+            if (this.today) {
+                params.start_at = moment().format('YYYY-MM-DD 00:00:00')
             }
             if (this.search.company_id) {
                 params.company_id = this.search.company_id
@@ -99,6 +113,9 @@ class Ctrl {
             }
             if (this.search.status_id == 0 || this.search.status_id) {
                 params.status = this.search.status_id
+            }
+            if (this.isNotSign) {
+                params.is_not_sign = true
             }
             console.log(params)
             this.orderService.orderList(this.store_id, this.order.currentPage, this.order.per_page, params)
@@ -123,6 +140,7 @@ class Ctrl {
                 if (data.meta && data.meta.code == 0) {
                     this.alertService.success('保存成功')
                     order.status = status
+                    order.updated_at = moment()
                 } else {
                     this.alertService.danger('保存失败')
                 }
@@ -130,6 +148,16 @@ class Ctrl {
                 this.alertService.danger('保存失败')
             })
         }
+    }
+
+    toggleToday() {
+        this.today = !this.today
+        this.order.search()
+    }
+
+    toggleNotSign() {
+        this.isNotSign = !this.isNotSign
+        this.order.search()
     }
 
 }

@@ -5,7 +5,7 @@
 
 from flask.ext.restful import Resource, reqparse
 from ._base import AuthResource
-from application.models import Member as MemberModel, db
+from application.models import Member as MemberModel, db, Store as StoreModel
 from application import schemas
 from flask.ext.jwt import jwt_required, current_identity as current_user
 from flask import abort, request
@@ -46,12 +46,15 @@ class Store(AuthResource):
     def put(self, store_id):
         self.parser.add_argument('name', type=unicode)
         self.parser.add_argument('remark', type=unicode)
+        self.parser.add_argument('default', type=bool, default=None)
         params = self.parser.parse_args()
         store = current_user.stores.filter_by(id=store_id).first_or_404()
         if params.get('name'):
             store.name = params['name']
         if params.get('remark', None) is not None:
             store.remark = params['remark']
+        if params.default is not None:
+            store.default = params.default
         store.save()
 
         result = schemas.StoreSchema(exclude=('users', 'companies')).dump(store)
@@ -74,9 +77,13 @@ class StoreList(AuthResource):
     def get(self):
         self.parser.add_argument('page', type=int, location="args", default=1)
         self.parser.add_argument('per_page', type=int, location="args", default=10)
+        self.parser.add_argument('default', type=int, location="args", default=None)
         args = self.parser.parse_args()
         per_page = args['per_page'] if args['per_page'] <= 100 else 100
-        paginate = current_user.stores.paginate(args['page'], per_page)
+        store_query = current_user.stores
+        if args.default is not None:
+            store_query = store_query.filter_by(default=bool(args.default))
+        paginate = store_query.paginate(args['page'], per_page)
         store_schema = schemas.StoreSchema(many=True, exclude=('users', 'companies'))
         result = store_schema.dump(paginate.items)
         return tool.success({

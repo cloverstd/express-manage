@@ -60,6 +60,8 @@ class Store(db.Model, BaseModel):
         )
     )
 
+    default = db.Column(db.Boolean, default=False)
+
     @property
     def url(self):
         return url_for('store', id=self.id)

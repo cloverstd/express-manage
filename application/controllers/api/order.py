@@ -132,6 +132,7 @@ class OrderList(AuthResource):
         self.parser.add_argument('number', type=unicode, location="args")
         self.parser.add_argument('status', type=int, location="args", default=None)
         self.parser.add_argument('key', type=unicode, location="args")
+        self.parser.add_argument('is_not_sign', type=unicode, location="args", default=None)
         args = self.parser.parse_args()
         per_page = args['per_page'] if args['per_page'] <= 100 else 100
         end_at = args.end_at or tool.now(False)
@@ -161,8 +162,14 @@ class OrderList(AuthResource):
                 )
             )
         if args.status is not None:
+            if args.is_not_sign is not None:
+                order_query = order_query.filter(
+                    models.Order.status == args.status
+                )
+
+        if args.is_not_sign is not None:
             order_query = order_query.filter(
-                models.Order.status == args.status
+                models.Order.status < 10
             )
         paginate = order_query.order_by(models.Order.no, models.Order.created_at.desc()).paginate(
             args.page,

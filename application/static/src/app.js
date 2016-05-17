@@ -45,6 +45,7 @@ export default angular
     .module('express-manage', [
         'ui.router',
         'ui.bootstrap',
+        'angular-loading-bar',
         Member.name,
         Store.name,
         Order.name,

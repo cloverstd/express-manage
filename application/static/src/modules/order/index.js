@@ -16,6 +16,7 @@ export default angular
     .config(Router)
     .controller('OrderAddCtrl', OrderAddCtrl)
     .controller('OrderCtrl', OrderCtrl)
+    .controller('todayOrderCtrl', OrderCtrl)
 
 register('express-manage.app.order')
 .factory('orderService', Service)

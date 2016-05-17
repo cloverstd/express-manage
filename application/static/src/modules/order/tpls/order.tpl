@@ -19,9 +19,10 @@
                                    clear-text="清除"
                                    current-text="今天"
                                    ng-change="vm.order.search()"
+                                    ng-disabled="vm.today"
                             />
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="vm.startAtOpend = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default" ng-click="vm.startAtOpend = true" ng-disabled="vm.today"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </p>
                     </div>
@@ -40,9 +41,10 @@
                                    clear-text="清除"
                                    current-text="今天"
                                    ng-change="vm.order.search()"
+                                    ng-disabled="vm.today"
                             />
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="vm.endAtOpend = true"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default" ng-click="vm.endAtOpend = true" ng-disabled="vm.today"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </p>
                     </div>
@@ -57,9 +59,19 @@
                         <input type="text" class="form-control" ng-change="vm.order.search()" ng-model="vm.search.key" placeholder="请输入单号,姓名,手机号过滤">
                     </div>
                     <div class="col-xs-4">
-                        <select class="form-control" ng-options="status.id as status.name for status in vm.status" ng-model="vm.search.status_id" ng-change="vm.order.search()">
+                        <select ng-disabled="vm.isNotSign" class="form-control" ng-options="status.id as status.name for status in vm.status" ng-model="vm.search.status_id" ng-change="vm.order.search()">
                             <option value="">请选择快递状态</option>
                         </select>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="btn-group btn-xs">
+                            <button class="btn btn-default" ng-class="{'active': vm.order.per_page == 10}" ng-click="vm.order.per_page = 10;vm.order.search()" ng-disabled="vm.order.per_page == 10">10</button>
+                            <button class="btn btn-default" ng-class="{'active': vm.order.per_page == 50}" ng-click="vm.order.per_page = 50;vm.order.search()" ng-disabled="vm.order.per_page == 50">50</button>
+                            <button class="btn btn-default" ng-class="{'active': vm.order.per_page == 100}" ng-click="vm.order.per_page = 100;vm.order.search()" ng-disabled="vm.order.per_page == 100">100</button>
+                        </div>
+                        <button class="btn btn-danger" ng-click="vm.reset()">重置</button>
+                        <button class="btn btn-warning" ng-click="vm.toggleToday()" ng-class="{'active': vm.today}">今天</button>
+                        <button class="btn btn-success" ng-click="vm.toggleNotSign()" ng-class="{'active': vm.isNotSign}">待签收</button>
                     </div>
                 </div>
                 <div class="text-center" ng-show="vm.search.loading">

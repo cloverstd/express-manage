@@ -7,10 +7,10 @@ class Mobile {
         this.restrict   = 'AEC'
         this.template   = `
         <div>
-            <button class="btn btn-info btn-xs" ng-click="show = !show"><i class="fa" ng-class="{'fa-eye': !show, 'fa-eye-slash': show, 'active': show}"></i></button>
-            <span>{{mobile ? mobile.slice(0, 7) : '-'}}</span>
-            <span ng-show="show">{{mobile.slice(7)}}</span>
-            <span ng-hide="show">****</span>
+            <button ng-if="tailNumber" class="btn btn-info btn-xs" ng-click="toggle()"><i class="fa" ng-class="{'fa-eye': !show, 'fa-eye-slash': show, 'active': show}"></i></button>
+            <span>{{headNumber}}</span>
+            <span ng-show="show">{{tailNumber}}</span>
+            <span ng-hide="show" ng-if="tailNumber">****</span>
         </div>
         `
         this.replace    = true
@@ -22,7 +22,16 @@ class Mobile {
     }
 
     link(scope, ele, attrs, controller) {
-        scope.mobile = attrs.number
+        scope.show = false
+        scope.toggle = () => {
+            scope.show = !scope.show
+        }
+        if (attrs.number.length > 4) {
+            scope.tailNumber = attrs.number.slice(attrs.number.length - 4)
+            scope.headNumber = attrs.number.slice(0, attrs.number.length - 4)
+        } else {
+            scope.headNumber = attrs.number
+        }
     }
 }
 

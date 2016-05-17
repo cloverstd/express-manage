@@ -20,7 +20,7 @@
                             <th>创建时间</th>
                             <th></th>
                         </tr>
-                        <tr ng-repeat="store in vm.store.items">
+                        <tr ng-repeat="store in vm.store.items" ng-class="{active: store.default}">
                             <td>{{store.id}}</td>
                             <td>{{store.name}}</td>
                             <td>{{store.remark}}</td>
@@ -70,6 +70,14 @@
                 <label class="col-sm-2 control-label">店铺描述</label>
                 <div class="col-sm-10">
                     <textarea cols="30" rows="10" class="form-control" ng-model="currentEditForm.remark"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">默认店铺</label>
+                <div class="col-sm-10">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" ng-value="true" ng-model="currentEditForm.default">
+                    </label>
                 </div>
             </div>
         </form>

@@ -14,7 +14,7 @@ function Router($stateProvider) {
         })
 
         .state('order.list', {
-            url: '',
+            url: '?is_today&status',
             templateUrl: orderTpl,
             controller: 'OrderCtrl as vm',
             authenticate: true

@@ -18,7 +18,7 @@ AppCtrl.$inject = ['$state']
 
 
 class NavCtrl {
-    constructor($state, $rootScope, memberService, AUTH_EVENTS, authService) {
+    constructor($state, $rootScope, memberService, AUTH_EVENTS, authService, storeService) {
         const vm = this
         Object.assign(vm, {
             $state,
@@ -26,6 +26,7 @@ class NavCtrl {
             memberService,
             AUTH_EVENTS,
             authService,
+            storeService,
         })
         vm.init()
     }
@@ -35,6 +36,7 @@ class NavCtrl {
 
         if (vm.authService.isAuthenticated() && !vm.$rootScope.current_user) {
             vm.getCurrent()
+            vm.defaultStoreInit()
         }
 
         vm.$rootScope.$on(vm.AUTH_EVENTS.loginSuccess, () => {
@@ -59,9 +61,21 @@ class NavCtrl {
                 }
             })
     }
+    
+    defaultStoreInit() {
+        const vm = this
+        vm.storeService.storeList(1, 1, 1)
+            .then(data => {
+                if (data.data.items) {
+                    vm.$rootScope.defaultStore = data.data.items[0]
+                } else {
+                    vm.$rootScope.defaultStore = {}
+                }
+            })
+    }
 
 }
-NavCtrl.$inject = ['$state', '$rootScope', 'memberService', 'AUTH_EVENTS', 'authService']
+NavCtrl.$inject = ['$state', '$rootScope', 'memberService', 'AUTH_EVENTS', 'authService', 'storeService']
 
 export {
     AppCtrl,
