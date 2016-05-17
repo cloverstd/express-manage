@@ -8,7 +8,7 @@ from application import models
 from application import schemas
 from flask.ext.jwt import jwt_required, current_identity as current_user
 from application.utils import tool, lib
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
 
 class OrderNo(AuthResource):
@@ -271,3 +271,55 @@ class OrderList(AuthResource):
         result = schemas.OrderSchema().dump(order)
 
         return tool.success(result.data)
+
+
+class OrderStatistics(AuthResource):
+
+    def get(self, store_id):
+        self.parser.add_argument('start_at', type=lib.arrow_datetime, help="开始时间必填", required=True, location="args")
+        self.parser.add_argument('end_at', type=lib.arrow_datetime, help="结束时间", location="args")
+        self.parser.add_argument('model', type=unicode, location="args", default="month")
+        self.parser.add_argument('company_id', type=int, help="公司 ID", location="args")
+
+        args = self.parser.parse_args()
+        if args.model == 'day':
+            order_query = models.db.session.query(
+                func.count(1).label('total'),
+                func.date_format(models.Order.created_at, '%Y年%m月%d日').label('date'),
+            )
+        elif args.model == 'week':
+            order_query = models.db.session.query(
+                func.count(1).label('total'),
+                func.date_format(models.Order.created_at, '%Y年第%v周').label('date'),
+            )
+        else:
+            order_query = models.db.session.query(
+                func.count(1).label('total'),
+                func.date_format(models.Order.created_at, '%Y年%m月').label('date'),
+            )
+        if not args.end_at:
+            args.end_at = tool.now(False)
+
+        order_query = order_query.filter(
+            models.Order.created_at >= args.start_at.naive,
+            models.Order.created_at <= args.end_at.naive,
+        )
+        if args.company_id:
+            order_query = order_query.filter(
+                models.Order.company_id == args.company_id,
+            )
+        if args.model == "day":
+            order_query = order_query.group_by(func.day(models.Order.created_at))
+        elif args.model == "week":
+            order_query = order_query.group_by(func.week(models.Order.created_at))
+        else:
+            order_query = order_query.group_by(func.month(models.Order.created_at))
+        xAxis = list()
+        series_data = list()
+        for i in order_query:
+            xAxis.append(i.date)
+            series_data.append(i.total)
+        return tool.success({
+            'xAxis': xAxis,
+            'series_data': series_data,
+        })

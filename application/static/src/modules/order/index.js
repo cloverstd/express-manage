@@ -8,6 +8,7 @@ import Router from './router'
 
 import OrderAddCtrl from './controllers/order.add'
 import OrderCtrl from './controllers/order'
+import OrderStatisticsCtrl from './controllers/order.statistics'
 
 import Service from './services'
 
@@ -16,7 +17,7 @@ export default angular
     .config(Router)
     .controller('OrderAddCtrl', OrderAddCtrl)
     .controller('OrderCtrl', OrderCtrl)
-    .controller('todayOrderCtrl', OrderCtrl)
+    .controller('OrderStatisticsCtrl', OrderStatisticsCtrl)
 
 register('express-manage.app.order')
 .factory('orderService', Service)

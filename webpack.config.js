@@ -22,6 +22,7 @@ var config = {
             'angular-ui-router',
             'angular-ui-bootstrap',
             'angular-loading-bar',
+            'echarts',
         ]
     },
     output: {

@@ -4,6 +4,7 @@
 
 import orderAddTpl from './tpls/order.add.tpl'
 import orderTpl from './tpls/order.tpl'
+import orderStatisticsTpl from './tpls/order.statistics.tpl'
 
 function Router($stateProvider) {
     $stateProvider
@@ -33,6 +34,13 @@ function Router($stateProvider) {
         .state('order.detail', {
             url: '/{order_id:int}',
             template: 'order.detail',
+            authenticate: true
+        })
+
+        .state('order.statistics', {
+            url: '/statistics',
+            templateUrl: orderStatisticsTpl,
+            controller: 'OrderStatisticsCtrl as vm',
             authenticate: true
         })
 }

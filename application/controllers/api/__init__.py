@@ -18,7 +18,7 @@ api.add_resource(member.StoreCompany, '/member/store/<store_id>/company/<company
 api.add_resource(order.OrderList, '/member/store/<store_id>/order')
 api.add_resource(order.OrderNo, '/member/store/<store_id>/order/no')
 api.add_resource(order.Order, '/member/store/<store_id>/order/<order_id>')
-
+api.add_resource(order.OrderStatistics, '/member/store/<store_id>/order/statistics')
 api.add_resource(user.UserList, '/member/store/<store_id>/user')
 api.add_resource(user.User, '/member/store/<store_id>/user/<user_id>')
 api.add_resource(user.UserName, '/member/store/<store_id>/user/<user_id>/name/<int:id>')

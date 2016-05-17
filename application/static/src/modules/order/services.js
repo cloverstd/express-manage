@@ -45,6 +45,10 @@ class Order extends HTTPService {
         params.per_page = per_page || 10
         return this.get(`/api/member/store/${store_id}/user`, params)
     }
+
+    orderStatistics(store_id, params) {
+        return this.get(`/api/member/store/${store_id}/order/statistics`, params)
+    }
 }
 
 export default Order
