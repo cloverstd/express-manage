@@ -41,7 +41,7 @@ def paginate_to_json(paginate):
     return {
         'page': paginate.page,
         'pages': paginate.pages,
-        'totle': paginate.total,
+        'total': paginate.total,
         'has_prev': paginate.has_prev,
         'has_next': paginate.has_next,
         'next_num': paginate.next_num,

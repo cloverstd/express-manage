@@ -16,6 +16,7 @@ def index():
     return render_template("index.html")
 
 
-@bp.route('/m')
+@bp.route('m')
+@bp.route('m/')
 def mobile():
     return render_template("mobile.html")

@@ -141,7 +141,7 @@ class OrderList(AuthResource):
                 models.Company.store == store,
                 models.Order.created_at >= args.start_at.naive,
                 models.Order.created_at <= end_at.naive,
-            )
+            ).join(models.UserName).join(models.User)
         if args.user_id:
             order_query = order_query.filter(
                 models.Order.user_id == args.user_id,
@@ -155,14 +155,15 @@ class OrderList(AuthResource):
                 models.Order.number.like(u'%{}%'.format(args.number))
             )
         if args.key:
-            order_query = order_query.join(models.UserName).filter(
+            order_query = order_query.filter(
                 or_(
                     models.Order.number.like(u'%{}%'.format(args.key)),
+                    models.User.mobile.like(u'%{}%'.format(args.key)),
                     models.UserName.name.like(u'%{}%'.format(args.key)),
                 )
             )
         if args.status is not None:
-            if args.is_not_sign is not None:
+            if args.is_not_sign is None:
                 order_query = order_query.filter(
                     models.Order.status == args.status
                 )
