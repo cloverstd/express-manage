@@ -5,7 +5,7 @@
     </ion-header-bar>
     <ion-content class="padding">
         <ion-list>
-            <ion-radio ng-repeat="status in ::vm.status" ng-model="vm.addForm.status_id" ng-value="status.id" ng-click="vm.statusModal.choice(status)">{{status.name}}</ion-radio>
+            <ion-radio ng-repeat="status in ::vm.statusData" ng-model="vm.addForm.status" ng-value="status.id" ng-click="vm.statusModal.choice(status)">{{status.name}}</ion-radio>
         </ion-list>
     </ion-content>
 </ion-modal-view>

@@ -486,7 +486,7 @@ webpackJsonp([0],[
 /***/ function(module, exports) {
 
 	var path = '/Users/cloverstd/Dropbox/WorkSpace/express-manage/application/static/mobile/module/order/tpl/add.tpl';
-	var html = "<ion-view cache-view=\"false\" view-title=\"到件录单\">\n\n    <ion-nav-buttons side=\"right\">\n          <button class=\"button\">\n              保存\n          </button>\n    </ion-nav-buttons>\n\n    <ion-content>\n        <div class=\"list\">\n            <label class=\"item\">\n                <h2 class=\"text-center\">收件人信息</h2>\n            </label>\n            <label class=\"item item-input\">\n                <span class=\"input-label\">姓名</span>\n                <input type=\"text\" placeholder=\"姓名\">\n            </label>\n            <label class=\"item item-input\">\n                <span class=\"input-label\">手机号码</span>\n                <input type=\"tel\" placeholder=\"手机号码\">\n            </label>\n            <label class=\"item item-input\">\n                <textarea placeholder=\"地址\"></textarea>\n            </label>\n            <label class=\"item item-input\">\n                <textarea placeholder=\"备注\"></textarea>\n            </label>\n        </div>\n        <div class=\"list\">\n            <label class=\"item\">\n                <h2 class=\"text-center\">快递信息</h2>\n            </label>\n            <label class=\"item item-input\" ng-click=\"vm.statusModal.open()\">\n                <span class=\"input-label\">快递状态</span>\n\n                <span class=\"item-note\">\n                    {{vm.addForm.status_name}}\n                </span>\n            </label>\n            <label class=\"item item-input\" ng-click=\"vm.companyModal.open()\">\n                <div class=\"input-label\">\n                    快递公司\n                </div>\n                <span class=\"item-note\">\n                    {{vm.addForm.company_name}}\n                </span>\n            </label>\n\n            <label class=\"item item-input\">\n                <input type=\"tel\" placeholder=\"快递编号\">\n            </label>\n            <label class=\"item item-input item-input-inset\">\n\n                <label class=\"item-input-wrapper\">\n                    <input type=\"number\" placeholder=\"快递单号\">\n                </label>\n                <button class=\"button button-light\">\n                    <i class=\"icon ion-qr-scanner\"></i>\n                </button>\n            </label>\n            <label class=\"item item-input\">\n                <textarea placeholder=\"备注\"></textarea>\n            </label>\n        </div>\n    </ion-content>\n</ion-view>\n";
+	var html = "<ion-view cache-view=\"false\" view-title=\"到件录单\">\n\n    <ion-nav-buttons side=\"right\">\n          <button class=\"button\" ng-click=\"vm.orderSave()\">\n              保存\n          </button>\n    </ion-nav-buttons>\n\n    <ion-content>\n        <div class=\"list\">\n            <label class=\"item item-divider\">\n                收件人信息\n                <div class=\"user-search\">\n                    <button ng-if=\"!vm.addForm.user.id\" class=\"button button-small button-icon icon ion-search\" ng-click=\"vm.userSearchModal.open()\">\n                    </button>\n                    <button ng-if=\"vm.addForm.user.id\" ng-click=\"vm.clearUserSearch()\" class=\"button button-small button-icon icon ion-close-circled\"></button>\n                </div>\n            </label>\n\n            <label class=\"item item-input\">\n                <span class=\"input-label\">姓名</span>\n                <input type=\"text\" placeholder=\"姓名\" ng-model=\"vm.addForm.user.name\">\n            </label>\n            <label class=\"item item-input\">\n                <span class=\"input-label\">手机号码</span>\n                <input type=\"tel\" placeholder=\"手机号码\" ng-model=\"vm.addForm.user.mobile\">\n            </label>\n            <label class=\"item item-input\">\n                <textarea placeholder=\"地址\" ng-model=\"vm.addForm.user.address\"></textarea>\n            </label>\n            <label class=\"item item-input\">\n                <textarea placeholder=\"备注\" ng-model=\"vm.addForm.user.remark\"></textarea>\n            </label>\n            <label class=\"item item-divider\">\n                快递信息\n            </label>\n            <label class=\"item item-input\" ng-click=\"vm.statusModal.open()\">\n                <span class=\"input-label\">快递状态</span>\n\n                <span class=\"item-note\">\n                    {{vm.addForm.status_name}}\n                </span>\n            </label>\n            <label class=\"item item-input\" ng-click=\"vm.companyModal.open()\">\n                <div class=\"input-label\">\n                    快递公司\n                </div>\n                <span class=\"item-note\">\n                    {{vm.addForm.company_name}}\n                </span>\n            </label>\n\n            <div class=\"item item-input-inset\">\n                <label class=\"item-input-wrapper\">\n                    <input type=\"tel\" placeholder=\"快递编号\" ng-model=\"vm.addForm.no\">\n                </label>\n                <button class=\"button button-small button-icon icon ion-load-c\" ng-click=\"vm.noInit()\">\n                </button>\n            </div>\n            <!--<label class=\"item item-input-inset\">-->\n\n                <!--<label class=\"item-input-wrapper\">-->\n                    <!--<input type=\"number\" placeholder=\"快递单号\" ng-model=\"vm.addForm.number\">-->\n                <!--</label>-->\n                <!--<button class=\"button button-light\">-->\n                    <!--<i class=\"icon ion-qr-scanner\"></i>-->\n                <!--</button>-->\n            <!--</label>-->\n            <div class=\"item item-input-inset\">\n                <label class=\"item-input-wrapper\">\n                    <input type=\"text\" placeholder=\"快递单号\" ng-model=\"vm.addForm.number\">\n                </label>\n                <button class=\"button button-small button-icon icon ion-qr-scanner\" ng-click=\"\">\n                </button>\n            </div>\n            <label class=\"item item-input\">\n                <textarea placeholder=\"备注\" ng-model=\"vm.addForm.remark\"></textarea>\n            </label>\n        </div>\n    </ion-content>\n</ion-view>\n";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
@@ -539,17 +539,27 @@ webpackJsonp([0],[
 	
 	var _addFormCompanyRadio2 = _interopRequireDefault(_addFormCompanyRadio);
 	
+	var _userSearchModal = __webpack_require__(53);
+	
+	var _userSearchModal2 = _interopRequireDefault(_userSearchModal);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Ctrl = function () {
-	    function Ctrl($ionicModal, $scope) {
+	    function Ctrl($ionicModal, $scope, orderService, $ionicLoading, $stateParams, storeService, $ionicScrollDelegate, $ionicPopup) {
 	        _classCallCheck(this, Ctrl);
 	
 	        Object.assign(this, {
 	            $ionicModal: $ionicModal,
-	            $scope: $scope
+	            $scope: $scope,
+	            orderService: orderService,
+	            $ionicLoading: $ionicLoading,
+	            $stateParams: $stateParams,
+	            storeService: storeService,
+	            $ionicScrollDelegate: $ionicScrollDelegate,
+	            $ionicPopup: $ionicPopup
 	        });
 	
 	        this.init();
@@ -559,15 +569,26 @@ webpackJsonp([0],[
 	    _createClass(Ctrl, [{
 	        key: 'init',
 	        value: function init() {
+	            var _this = this;
+	
 	            var vm = this;
 	            vm.addForm = {
-	                status_id: 0
+	                status: 0
 	            };
-	            vm.statusModalInit();
-	            vm.statusInit();
-	            vm.companyInit();
-	            vm.companyModalInit();
-	            vm.text = "123";
+	            this.storeService.storeList(1, 1, 1).then(function (data) {
+	                if (data.data.items) {
+	                    _this.store = data.data.items[0];
+	                } else {
+	                    _this.store = {};
+	                }
+	
+	                vm.statusModalInit();
+	                vm.statusInit();
+	                vm.companyInit();
+	                vm.companyModalInit();
+	                vm.userSearchModalInit();
+	                vm.noInit();
+	            });
 	        }
 	    }, {
 	        key: 'statusInit',
@@ -580,7 +601,7 @@ webpackJsonp([0],[
 	                #  10 -- 签收
 	                #  11  -- 拒收
 	             */
-	            this.status = [{
+	            this.statusData = [{
 	                id: 0,
 	                name: '到达'
 	            }, {
@@ -600,84 +621,196 @@ webpackJsonp([0],[
 	                name: '拒收'
 	            }];
 	
-	            this.addForm.status_name = this.status[0].name;
+	            this.addForm.status_name = this.statusData[0].name;
 	        }
 	    }, {
 	        key: 'statusModalInit',
 	        value: function statusModalInit() {
-	            var _this = this;
+	            var _this2 = this;
 	
 	            this.statusModal = {};
 	            this.$ionicModal.fromTemplateUrl(_addFormStatusRadio2.default, {
 	                scope: this.$scope,
 	                animation: 'slide-in-up'
 	            }).then(function (modal) {
-	                _this.statusModal.instance = modal;
+	                _this2.statusModal.instance = modal;
 	            });
 	            this.statusModal.open = function () {
-	                _this.statusModal.instance.show();
+	                _this2.statusModal.instance.show();
 	            };
 	
 	            this.statusModal.close = function () {
-	                _this.statusModal.instance.hide();
+	                _this2.statusModal.instance.hide();
 	            };
 	
 	            this.statusModal.choice = function (status) {
-	                _this.addForm.status_name = status.name;
-	                _this.statusModal.close();
+	                _this2.addForm.status_name = status.name;
+	                _this2.statusModal.close();
 	            };
 	        }
 	    }, {
 	        key: 'companyInit',
 	        value: function companyInit() {
-	            this.company = [{
-	                id: 1,
-	                name: '天天快递'
-	            }, {
-	                id: 2,
-	                name: '顺丰快递'
-	            }, {
-	                id: 3,
-	                name: '全峰快递'
-	            }, {
-	                id: 4,
-	                name: '京东'
-	            }];
+	            var _this3 = this;
 	
-	            this.addForm.company_name = this.company[0].name;
-	            this.addForm.company_id = this.company[0].id;
+	            this.storeService.companyList(this.store.id, 1, 1, 'all').then(function (data) {
+	                _this3.company = data.data.items;
+	                if (_this3.company) {
+	                    _this3.addForm.company_name = _this3.company[0].name;
+	                    _this3.addForm.company_id = _this3.company[0].id;
+	                }
+	            });
 	        }
 	    }, {
 	        key: 'companyModalInit',
 	        value: function companyModalInit() {
-	            var _this2 = this;
+	            var _this4 = this;
 	
 	            this.companyModal = {};
 	            this.$ionicModal.fromTemplateUrl(_addFormCompanyRadio2.default, {
 	                scope: this.$scope,
 	                animation: 'slide-in-up'
 	            }).then(function (modal) {
-	                _this2.companyModal.instance = modal;
+	                _this4.companyModal.instance = modal;
 	            });
 	            this.companyModal.open = function () {
-	                _this2.companyModal.instance.show();
+	                _this4.companyModal.instance.show();
 	            };
 	
 	            this.companyModal.close = function () {
-	                _this2.companyModal.instance.hide();
+	                _this4.companyModal.instance.hide();
 	            };
 	
 	            this.companyModal.choice = function (company) {
-	                _this2.addForm.company_name = company.name;
-	                _this2.companyModal.close();
+	                _this4.addForm.company_name = company.name;
+	                _this4.companyModal.close();
 	            };
+	        }
+	    }, {
+	        key: 'userSearchModalInit',
+	        value: function userSearchModalInit() {
+	            var _this5 = this;
+	
+	            this.userSearchModal = {};
+	            this.$ionicModal.fromTemplateUrl(_userSearchModal2.default, {
+	                scope: this.$scope,
+	                animation: 'slide-in-up'
+	            }).then(function (modal) {
+	                _this5.userSearchModal.instance = modal;
+	            });
+	            this.userSearchModal.open = function () {
+	                _this5.userSearchModal.instance.show();
+	            };
+	
+	            this.userSearchModal.close = function () {
+	                _this5.userSearchModal.instance.hide();
+	            };
+	
+	            this.userSearch = {
+	                page: 1,
+	                per_page: 10,
+	                key: null,
+	                type: 'mobile'
+	            };
+	
+	            this.userSearchModal.search = function (cb) {
+	                var search = {};
+	                if (_this5.userSearch.mobile) {
+	                    search.mobile = _this5.userSearch.key;
+	                } else {
+	                    search.name = _this5.userSearch.key;
+	                }
+	                _this5.userSearch.searching = true;
+	                _this5.orderService.userSearch(_this5.store.id, _this5.userSearch.page, _this5.userSearch.per_page, search).then(function (data) {
+	                    if (cb) {
+	                        cb(data.data.items);
+	                    } else {
+	                        _this5.userSearchModal.items = data.data.items;
+	                    }
+	
+	                    _this5.userSearchModal.paginate = data.data.paginate;
+	                    _this5.userSearch.searching = false;
+	                });
+	            };
+	
+	            this.userSearchModal.has_next = function () {
+	                if (_this5.userSearchModal.paginate) {
+	                    if (_this5.userSearchModal.paginate.has_next) {
+	                        return true;
+	                    }
+	                }
+	                return false;
+	            };
+	
+	            this.userSearchModal.loadMore = function () {
+	                _this5.userSearch.page = _this5.userSearchModal.paginate.next_num;
+	                _this5.userSearchModal.search(function (items) {
+	                    items.map(function (item) {
+	                        _this5.userSearchModal.items.push(item);
+	                    });
+	                    _this5.$ionicScrollDelegate.scrollBottom();
+	                });
+	            };
+	
+	            this.userSearchModal.choice = function (user, user_name) {
+	                _this5.addForm.user = {
+	                    id: user.id,
+	                    user_name_id: user_name.id,
+	                    name: user_name.name,
+	                    mobile: user.mobile
+	                };
+	                console.log(_this5.addForm);
+	                _this5.userSearchModal.close();
+	            };
+	        }
+	    }, {
+	        key: 'orderSave',
+	        value: function orderSave() {
+	            var _this6 = this;
+	
+	            this.orderService.orderPost(this.store.id, this.addForm).then(function (data) {
+	                if (data.meta && data.meta.code == 0) {
+	                    _this6.addForm = {
+	                        status: _this6.addForm.status,
+	                        company_id: _this6.addForm.company_id
+	                    };
+	                    _this6.noInit();
+	                } else {
+	                    console.log(data);
+	                    _this6.$ionicPopup.alert({
+	                        title: '错误',
+	                        template: '发生了错误'
+	                    });
+	                }
+	            }).catch(function (data) {
+	                _this6.$ionicPopup.alert({
+	                    title: '错误',
+	                    template: '发生了错误'
+	                });
+	            });
+	        }
+	    }, {
+	        key: 'noInit',
+	        value: function noInit() {
+	            var _this7 = this;
+	
+	            console.log('hi');
+	            this.orderService.orderNo(this.store.id).then(function (data) {
+	                _this7.no = data.data;
+	                _this7.addForm.no = _this7.no;
+	            });
+	        }
+	    }, {
+	        key: 'clearUserSearch',
+	        value: function clearUserSearch() {
+	            this.addForm.user = {};
 	        }
 	    }]);
 	
 	    return Ctrl;
 	}();
 	
-	Ctrl.$inject = ['$ionicModal', '$scope'];
+	Ctrl.$inject = ['$ionicModal', '$scope', 'orderService', '$ionicLoading', '$stateParams', 'storeService', '$ionicScrollDelegate', '$ionicPopup'];
 	
 	exports.default = Ctrl;
 
@@ -686,7 +819,7 @@ webpackJsonp([0],[
 /***/ function(module, exports) {
 
 	var path = '/Users/cloverstd/Dropbox/WorkSpace/express-manage/application/static/mobile/module/order/tpl/add.form.status.radio.tpl';
-	var html = "<ion-modal-view>\n    <ion-header-bar class=\"bar bar-header bar-positive\">\n        <h1 class=\"title\">选择快递状态</h1>\n        <button class=\"button button-clear button-primary\" ng-click=\"vm.statusModal.close()\">取消</button>\n    </ion-header-bar>\n    <ion-content class=\"padding\">\n        <ion-list>\n            <ion-radio ng-repeat=\"status in ::vm.status\" ng-model=\"vm.addForm.status_id\" ng-value=\"status.id\" ng-click=\"vm.statusModal.choice(status)\">{{status.name}}</ion-radio>\n        </ion-list>\n    </ion-content>\n</ion-modal-view>";
+	var html = "<ion-modal-view>\n    <ion-header-bar class=\"bar bar-header bar-positive\">\n        <h1 class=\"title\">选择快递状态</h1>\n        <button class=\"button button-clear button-primary\" ng-click=\"vm.statusModal.close()\">取消</button>\n    </ion-header-bar>\n    <ion-content class=\"padding\">\n        <ion-list>\n            <ion-radio ng-repeat=\"status in ::vm.statusData\" ng-model=\"vm.addForm.status\" ng-value=\"status.id\" ng-click=\"vm.statusModal.choice(status)\">{{status.name}}</ion-radio>\n        </ion-list>\n    </ion-content>\n</ion-modal-view>";
 	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
 	module.exports = path;
 
@@ -1847,6 +1980,28 @@ webpackJsonp([0],[
 	filter.$inject = ['$sce'];
 	
 	exports.default = filter;
+
+/***/ },
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */
+/***/ function(module, exports) {
+
+	var path = '/Users/cloverstd/Dropbox/WorkSpace/express-manage/application/static/mobile/module/order/tpl/user.search.modal.tpl';
+	var html = "<ion-modal-view>\n    <ion-header-bar class=\"bar bar-header bar-positive\">\n        <div class=\"buttons\" ng-click=\"vm.userSearchModal.close()\">\n            <button class=\"button\">取消</button>\n        </div>\n        <h1 class=\"title\">搜索用户</h1>\n    </ion-header-bar>\n    <ion-content class=\"padding\">\n        <div class=\"card\">\n            <div class=\"item item-divider\">\n            搜索\n            </div>\n            <div class=\"item\">\n                <div class=\"list\">\n                    <label class=\"item item-input\">\n                        <input type=\"text\" placeholder=\"输入姓名或者手机号码搜索\" ng-model=\"vm.userSearch.key\">\n                    </label>\n                    <label class=\"item\">\n                        <ion-toggle ng-model=\"vm.userSearch.mobile\" toggle-class=\"toggle-calm\">手机</ion-toggle>\n                    </label>\n                    <label class=\"item\">\n                        <div class=\"button-bar\">\n                            <button ng-disabled=\"!vm.userSearch.key\" class=\"button button-calm button-small\" ng-click=\"vm.userSearch.page = 1; vm.userSearchModal.search()\">搜索</button>\n                        </div>\n                    </label>\n                </div>\n            </div>\n        <!--</div>-->\n        <!--<div class=\"list card\" ng-show=\"vm.userSearchModal.items\">-->\n             <div class=\"item\" ng-repeat=\"user in vm.userSearchModal.items\" ng-show=\"vm.userSearchModal.items\">\n                 <mobile number=\"{{user.mobile}}\" />\n                 <div class=\"row\">\n                     <div class=\"col\" ng-repeat=\"user_name in user.names\">\n                         <button class=\"button button-small\" ng-click=\"vm.userSearchModal.choice(user, user_name)\">{{user_name.name}}</button>\n                     </div>\n                 </div>\n            </div>\n            <div class=\"item\" ng-show=\"vm.userSearchModal.has_next()\">\n                <button class=\"button button-small button-block button-positive\" ng-click=\"vm.userSearchModal.loadMore()\">加载更多</button>\n            </div>\n        </div>\n        <div class=\"text-center\" ng-show=\"vm.userSearch.searching\">\n             <ion-spinner></ion-spinner>\n        </div>\n    </ion-content>\n</ion-modal-view>";
+	window.angular.module('ng').run(['$templateCache', function(c) { c.put(path, html) }]);
+	module.exports = path;
 
 /***/ }
 ]);
