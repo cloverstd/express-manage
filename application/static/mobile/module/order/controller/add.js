@@ -223,6 +223,10 @@ class Ctrl {
                         company_id: this.addForm.company_id
                     }
                     this.noInit()
+                    this.$ionicPopup.alert({
+                        title: '成功',
+                        template: '录单成功'
+                    })
                 } else {
                     console.log(data)
                     this.$ionicPopup.alert({

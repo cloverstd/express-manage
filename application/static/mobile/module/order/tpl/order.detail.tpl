@@ -18,7 +18,7 @@
             <li class="item">
                 状态
                 <span class="item-note">
-                    <span ng-bind-html="vm.order.status|formatOrderStatus">
+                    <span ng-bind-html="vm.order.status|formatOrderStatus"/>
                 </span>
             </li>
             <li class="item">

@@ -5,12 +5,13 @@
 import orderDetailOpTpl from '../tpl/order.detail.op.tpl'
 
 class Ctrl {
-    constructor ($stateParams, orderService, $ionicPopover, $scope) {
+    constructor ($stateParams, orderService, $ionicPopover, $scope, $ionicPopup) {
         Object.assign(this, {
             $stateParams,
             orderService,
             $ionicPopover,
             $scope,
+            $ionicPopup,
         })
 
         this.init()
@@ -35,6 +36,33 @@ class Ctrl {
             })
     }
 
+    statusChange(status) {
+        console.log(status)
+        this.orderService.orderPut(this.store_id, this.order.id, {
+            status: status
+        }).then(data => {
+            if (data.meta && data.meta.code == 0) {
+                this.$ionicPopup.alert({
+                    title: '成功',
+                    template: '保存成功'
+                })
+                this.order.status = status
+                this.order.updated_at = moment()
+                this.opPopover.hide()
+            } else {
+                this.$ionicPopup.alert({
+                    title: '错误',
+                    template: '保存失败'
+                })
+            }
+        }).catch(data => {
+            this.$ionicPopup.alert({
+                title: '错误',
+                template: '保存失败'
+            })
+        })
+    }
+
     opInit() {
         this.opPopover = {}
         this.$ionicPopover.fromTemplateUrl(orderDetailOpTpl, {
@@ -57,6 +85,7 @@ Ctrl.$inject = [
     'orderService',
     '$ionicPopover',
     '$scope',
+    '$ionicPopup',
 ]
 
 export default Ctrl
