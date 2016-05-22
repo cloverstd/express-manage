@@ -15,10 +15,10 @@
                    ng-model="vm.search.key"
                    class="full-width"
                    ng-change="vm.change()">
-        <button class="button icon ion-qr-scanner"></button>
+        <scan class="button icon ion-qr-scanner" vm="vm" result="vm.search.key" ng-if="!vm.search.key" cb="vm.change()"></scan>
+        <button class="button icon ion-close-circled" ng-if="vm.search.key" ng-click="vm.search.key = null; vm.change()"></button>
     </ion-header-bar>
     <ion-content>
-
         <ion-list>
             <ion-item ng-repeat="order in vm.order.items" on-double-tap="vm.toggleOrderButton(order)" ui-sref="main.order.detail({store_id: vm.store.id, order_id: order.id})">
 

@@ -10,6 +10,12 @@
                 快递单
             </div>
             <li class="item">
+                编号
+                <span class="item-note">
+                    {{::vm.order.no}}
+                </span>
+            </li>
+            <li class="item">
                 单号
                 <span class="item-note">
                     {{::vm.order.number}}
@@ -31,6 +37,18 @@
                 备注
                 <span class="item-note">
                     {{::vm.order.remark}}
+                </span>
+            </li>
+            <li class="item">
+                录入时间
+                <span class="item-note">
+                    {{::vm.order.created_at}}
+                </span>
+            </li>
+            <li class="item" ng-if="vm.order.updated_at">
+                更新时间
+                <span class="item-note">
+                    {{vm.order.updated_at}}
                 </span>
             </li>
 

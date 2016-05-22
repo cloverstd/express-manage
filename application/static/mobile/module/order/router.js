@@ -6,6 +6,7 @@ import addTpl from './tpl/add.tpl'
 import queryTpl from './tpl/query.tpl'
 import historyTpl from './tpl/history.tpl'
 import orderDetailTpl from './tpl/order.detail.tpl'
+import quickAddTpl from './tpl/quick.add.tpl'
 
 function Router ($stateProvider) {
     $stateProvider
@@ -33,6 +34,17 @@ function Router ($stateProvider) {
                 'order-add@main': {
                     templateUrl: addTpl,
                     controller: 'AddCtrl as vm'
+                }
+            }
+        })
+
+        .state('main.order.add.quick', {
+            url: '/quick',
+            authenticate: true,
+            views: {
+                'order-add@main': {
+                    templateUrl: quickAddTpl,
+                    controller: 'QuickAddCtrl as vm'
                 }
             }
         })

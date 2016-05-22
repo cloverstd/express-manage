@@ -7,7 +7,7 @@ import addFormCompanyRadioTpl from '../tpl/add.form.company.radio.tpl'
 import userSearchTpl from '../tpl/user.search.modal.tpl'
 
 class Ctrl {
-    constructor($ionicModal, $scope, orderService, $ionicLoading, $stateParams, storeService, $ionicScrollDelegate, $ionicPopup) {
+    constructor($ionicModal, $scope, orderService, $ionicLoading, $stateParams, storeService, $ionicScrollDelegate, $ionicPopup, $ionicPlatform, $cordovaBarcodeScanner) {
         Object.assign(this, {
             $ionicModal,
             $scope,
@@ -17,6 +17,8 @@ class Ctrl {
             storeService,
             $ionicScrollDelegate,
             $ionicPopup,
+            $ionicPlatform,
+            $cordovaBarcodeScanner,
         })
 
         this.init()
@@ -155,6 +157,7 @@ class Ctrl {
             per_page: 10,
             key: null,
             type: 'mobile',
+            mobile: true
         }
 
         this.userSearchModal.search = (cb) => {
@@ -214,7 +217,6 @@ class Ctrl {
     }
 
     orderSave() {
-
         this.orderService.orderPost(this.store.id, this.addForm)
             .then(data => {
                 if (data.meta && data.meta.code == 0) {
@@ -229,16 +231,37 @@ class Ctrl {
                     })
                 } else {
                     console.log(data)
-                    this.$ionicPopup.alert({
-                        title: '错误',
-                        template: '发生了错误'
-                    })
+                    if (angular.isString(data.meta.message)) {
+                        this.$ionicPopup.alert({
+                            title: '错误',
+                            template: data.meta.message
+                        })
+                    } else {
+                        this.$ionicPopup.alert({
+                            title: '错误',
+                            template: `发生了错误`
+                        })
+                    }
                 }
             }).catch(data => {
-                this.$ionicPopup.alert({
+                if (data.meta && angular.isString(data.meta.message)) {
+                    this.$ionicPopup.alert({
                         title: '错误',
-                        template: '发生了错误'
+                        template: data.meta.message
                     })
+                } else if (data.meta && angular.isObject(data.meta.message)) {
+                    angular.forEach(data.meta.message, (value, key) => {
+                        this.$ionicPopup.alert({
+                            title: '错误',
+                            template: value
+                        })
+                    })
+                } else {
+                    this.$ionicPopup.alert({
+                            title: '错误',
+                            template: `发生了错误`
+                        })
+                    }
             })
     }
 
@@ -254,6 +277,27 @@ class Ctrl {
     clearUserSearch() {
         this.addForm.user = {}
     }
+
+    scan() {
+        this.checkNumberExist(this.addForm.number)
+
+    }
+
+    checkNumberExist(number) {
+        this.orderService.orderList(this.store.id, 1, 1, {
+            number: number,
+            start_at: moment().subtract(1, 'years').format('YYYY-01-01 00:00:00')
+        }).then(data => {
+            if (data.meta && data.meta.code == 0) {
+                if (data.data.items.length > 0) {
+                    this.$ionicPopup.alert({
+                        title: '警告',
+                        template: '单号已存在'
+                    })
+                }
+            }
+        })
+    }
 }
 
 Ctrl.$inject = [
@@ -265,6 +309,8 @@ Ctrl.$inject = [
     'storeService',
     '$ionicScrollDelegate',
     '$ionicPopup',
+    '$ionicPlatform',
+    '$cordovaBarcodeScanner',
 ]
 
 export default Ctrl

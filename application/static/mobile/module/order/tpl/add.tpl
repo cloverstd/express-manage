@@ -1,5 +1,9 @@
 <ion-view cache-view="false" view-title="到件录单">
-
+    <ion-nav-buttons side="left">
+          <a class="button" ui-sref="main.order.add.quick">
+              快速录单
+          </a>
+    </ion-nav-buttons>
     <ion-nav-buttons side="right">
           <button class="button" ng-click="vm.orderSave()">
               保存
@@ -70,8 +74,8 @@
                 <label class="item-input-wrapper">
                     <input type="text" placeholder="快递单号" ng-model="vm.addForm.number">
                 </label>
-                <button class="button button-small button-icon icon ion-qr-scanner" ng-click="">
-                </button>
+                <scan class="button button-small button-icon icon ion-qr-scanner" vm="vm" result="vm.addForm.number" ng-if="!vm.addForm.number" cb="vm.scan()"></scan>
+                <button class="button button-small button-icon icon ion-close-circled" ng-if="vm.addForm.number" ng-click="vm.addForm.number = null"></button>
             </div>
             <label class="item item-input">
                 <textarea placeholder="备注" ng-model="vm.addForm.remark"></textarea>

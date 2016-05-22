@@ -7,8 +7,8 @@
         <ion-nav-view name="order-query"></ion-nav-view>
     </ion-tab>
 
-    <!--<ion-tab title="快递历史" icon="ion-clipboard" ui-sref="main.order.history">-->
-        <!--<ion-nav-view name="order-history"></ion-nav-view>-->
-    <!--</ion-tab>-->
+    <ion-tab title="系统设置" icon="ion-gear-a" ui-sref="main.system.settings">
+        <ion-nav-view name="tab-3"></ion-nav-view>
+    </ion-tab>
 
 </ion-tabs>

@@ -103,7 +103,7 @@ def register_hooks(app):
             response.headers['X-Render-Time'] = delta * 1000
             if app.debug:
                 response.headers['Access-Control-Allow-Origin'] = '*'
-                response.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, Content-Type, Accept, x-token'
+                response.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, Content-Type, Accept, x-token, Authorization'
                 response.headers['Access-Controll-Max-Age'] = '1728000'
 
         return response

@@ -38,6 +38,7 @@
     "bootstrap": "^3.3.6",
     "echarts": "^3.1.9",
     "ionic-datepicker": "^1.1.0",
-    "jquery": "^2.2.3"
+    "jquery": "^2.2.3",
+    "ng-cordova": "^0.1.26-alpha"
   }
 }

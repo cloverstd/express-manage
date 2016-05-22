@@ -49,6 +49,16 @@ class Order extends HTTPService {
     orderStatistics(store_id, params) {
         return this.get(`/api/member/store/${store_id}/order/statistics`, params)
     }
+    
+    quickOrderList(store_id, page, per_page, params) {
+        params.page = page
+        params.per_page = per_page
+        return this.get(`/api/member/store/${store_id}/order/quick`, params)
+    }
+
+    quickOrderPost(store_id, params) {
+        return this.post(`/api/member/store/${store_id}/order/quick`, params)
+    }
 }
 
 export default Order

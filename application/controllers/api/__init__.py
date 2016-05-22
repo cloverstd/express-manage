@@ -16,6 +16,7 @@ api.add_resource(member.StoreCompanyList, '/member/store/<store_id>/company')
 api.add_resource(member.StoreCompany, '/member/store/<store_id>/company/<company_id>')
 
 api.add_resource(order.OrderList, '/member/store/<store_id>/order')
+api.add_resource(order.OrderQuickList, '/member/store/<store_id>/order/quick')
 api.add_resource(order.OrderNo, '/member/store/<store_id>/order/no')
 api.add_resource(order.Order, '/member/store/<store_id>/order/<order_id>')
 api.add_resource(order.OrderStatistics, '/member/store/<store_id>/order/statistics')

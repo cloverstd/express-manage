@@ -18,22 +18,23 @@ class OrderNo(AuthResource):
         if not store:
             return tool.fail(404, u"店铺不存在")
 
-        order_query = models.Order.query.join(models.Company).filter(
-            models.Order.status < 10,
-            models.Company.store == store,
-        ).order_by(models.Order.no)
-        all_no = [i.no for i in order_query]
-        if not all_no:
-            return tool.success(1)
-
-        number = all_no[0] - 1
-        if number > 0:
-            return tool.success(1)
-        for index, no in enumerate(map(lambda x: x-number, all_no)):
-            if no != index + 1:
-                return tool.success(index + 1 + number)
-
-        return tool.success(all_no[-1] + 1)
+        # order_query = models.Order.query.join(models.Company).filter(
+        #     models.Order.status < 10,
+        #     models.Company.store == store,
+        # ).order_by(models.Order.no)
+        # all_no = [i.no for i in order_query]
+        # if not all_no:
+        #     return tool.success(1)
+        #
+        # number = all_no[0] - 1
+        # if number > 0:
+        #     return tool.success(1)
+        # for index, no in enumerate(map(lambda x: x-number, all_no)):
+        #     if no != index + 1:
+        #         return tool.success(index + 1 + number)
+        #
+        # return tool.success(all_no[-1] + 1)
+        return tool.success(models.Order.get_no(store.id))
 
 
 class Order(AuthResource):
@@ -258,7 +259,7 @@ class OrderList(AuthResource):
         else:
             # 计算出 no
             # 1 此用户已有未领取的快递时,编同一个号
-            no = models.Order.get_max_no(store.id)
+            no = models.Order.get_no(store.id)
             order.no = no
         order.user_name = user_name
         order.company = company
@@ -324,3 +325,83 @@ class OrderStatistics(AuthResource):
             'xAxis': xAxis,
             'series_data': series_data,
         })
+
+
+class OrderQuickList(AuthResource):
+
+    def get(self, store_id):
+        store = current_user.stores.filter_by(id=store_id).first()
+        if not store:
+            return tool.fail(404, u"店铺不存在")
+
+        self.parser.add_argument('page', type=int, location="args", default=1)
+        self.parser.add_argument('per_page', type=int, location="args", default=10)
+        self.parser.add_argument('company_id', type=int, help="公司 ID", location="args")
+        self.parser.add_argument('number', type=unicode, location="args")
+        args = self.parser.parse_args()
+        per_page = args['per_page'] if args['per_page'] <= 100 else 100
+
+        order_query = models.Order.query. \
+            join(models.Company).filter(
+            models.Company.store == store,
+            models.Order.status == 0,
+            models.Order.is_quick == True
+        )
+
+        if args.company_id:
+            order_query = order_query.filter(
+                models.Order.company_id == args.company_id
+            )
+        if args.number:
+            order_query = order_query.filter(
+                models.Order.number == args.number
+            )
+
+        paginate = order_query.order_by(models.Order.no, models.Order.created_at.desc()).paginate(
+            args.page,
+            per_page,
+            False
+        )
+
+        order_schema = schemas.OrderSchema(many=True)
+        return tool.success({
+            "items": order_schema.dump(paginate.items).data,
+            "paginate": tool.paginate_to_json(paginate)
+        })
+
+    def post(self, store_id):
+        store = current_user.stores.filter_by(id=store_id).first()
+        if not store:
+            return tool.fail(404, u"店铺不存在")
+
+        self.parser.add_argument('company_id', type=int, required=True, help="公司必填")
+        self.parser.add_argument('number', type=unicode, required=True, help="快递单号必填")
+        self.parser.add_argument('no', type=int, default=None)
+        args = self.parser.parse_args()
+
+        company = store.companies.filter_by(id=args.company_id).first()
+        if not company:
+            return tool.fail(400, u"公司不存在")
+        order = company.orders.filter_by(number=args.number).first()
+        if order:
+            return tool.fail(406, u"快递单号已存在")
+
+        order = models.Order()
+
+        if args.no:
+            order.no = args.no
+        else:
+            # 计算出 no
+            # 1 此用户已有未领取的快递时,编同一个号
+            no = models.Order.get_no(store.id)
+            order.no = no
+
+        order.status = 0
+        order.company = company
+        order.number = args.number
+        order.is_quick = True
+        models.db.session.add(order)
+        models.db.session.commit()
+        result = schemas.OrderSchema().dump(order)
+
+        return tool.success(result.data)

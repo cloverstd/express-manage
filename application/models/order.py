@@ -33,6 +33,7 @@ class Order(db.Model, BaseModel):
     number = db.Column(db.String(20))  # 单号
     no = db.Column(db.SmallInteger)  # 编号
     remark = db.Column(db.String(500))
+    is_quick = db.Column(db.Boolean, default=False)
 
     plan_at = db.Column(db.DateTime)  # 计划领取时间
 
@@ -68,11 +69,30 @@ class Order(db.Model, BaseModel):
     def get_max_no(store_id):
         last_order = Order.query.join(Company).filter(
             Company.store_id == store_id,
-            Order.sign_at is not None,
+            Order.status < 10,
         ).order_by(Order.no.desc()).first()
         if last_order:
             return last_order.no + 1
         return 1
+
+    @staticmethod
+    def get_no(store_id):
+        order_query = Order.query.join(Company).filter(
+            Order.status < 10,
+            Company.store_id == store_id,
+        ).order_by(Order.no)
+        all_no = [i.no for i in order_query]
+        if not all_no:
+            return 1
+
+        number = all_no[0] - 1
+        if number > 0:
+            return 1
+        for index, no in enumerate(map(lambda x: x - number, all_no)):
+            if no != index + 1:
+                return index + 1 + number
+
+        return all_no[-1] + 1
 
     @staticmethod
     def get_by_user_id_and_order_id(user_id, order_id):

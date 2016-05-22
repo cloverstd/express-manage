@@ -5,7 +5,7 @@ import moment from 'moment'
 import queryFilterTpl from '../tpl/query.filter.tpl'
 
 class Ctrl {
-    constructor(orderService, $rootScope, $ionicLoading, storeService, $ionicModal, $scope, ionicDatePicker, $timeout, $ionicScrollDelegate) {
+    constructor(orderService, $rootScope, $ionicLoading, storeService, $ionicModal, $scope, ionicDatePicker, $timeout, $ionicScrollDelegate, $cordovaBarcodeScanner, $ionicPlatform, $ionicPopup) {
         Object.assign(this, {
             orderService,
             $rootScope,
@@ -16,6 +16,9 @@ class Ctrl {
             ionicDatePicker,
             $timeout,
             $ionicScrollDelegate,
+            $cordovaBarcodeScanner,
+            $ionicPlatform,
+            $ionicPopup,
         })
         this.init()
     }
@@ -227,6 +230,40 @@ class Ctrl {
             });
         }
     }
+
+    scan() {
+        console.log('scan')
+        // this.$cordovaBarcodeScanner
+        //         .scan()
+        //         .then((result) => {
+        //             console.log(result)
+        //             if (!result.cancelled) {
+        //                 this.search.key = result.text
+        //                 this.change()
+        //             }
+        //         }, (error) => {
+        //             this.$ionicPopup.alert({
+        //                 title: '错误',
+        //                 template: '扫描失败'
+        //             })
+        //         });
+        this.$ionicPlatform.ready(() => {
+            this.$cordovaBarcodeScanner
+                .scan()
+                .then((result) => {
+                    console.log(result)
+                    if (!result.cancelled) {
+                        this.search.key = result.text
+                        this.change()
+                    }
+                }, (error) => {
+                    this.$ionicPopup.alert({
+                        title: '错误',
+                        template: '扫描失败'
+                    })
+                });
+        })
+    }
 }
 
 Ctrl.$inject = [
@@ -239,6 +276,9 @@ Ctrl.$inject = [
     'ionicDatePicker',
     '$timeout',
     '$ionicScrollDelegate',
+    '$cordovaBarcodeScanner',
+    '$ionicPlatform',
+    '$ionicPopup',
 ]
 
 export default Ctrl

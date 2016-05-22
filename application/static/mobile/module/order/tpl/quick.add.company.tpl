@@ -1,0 +1,1 @@
+<ion-radio ng-model="vm.company_id" ng-value="company.id" ng-repeat="company in ::vm.company" ng-click="vm.setCompany(company)">{{company.name}}</ion-radio>

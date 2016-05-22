@@ -26,6 +26,7 @@ var config = {
             'ionic',
             'ionic-angular',
             'ionic-datepicker',
+            'ng-cordova',
         ]
     },
     output: {

@@ -58,6 +58,25 @@ export default angular
             }
         });
     }])
+    .config(($httpProvider) => {
+        $httpProvider.interceptors.push(($q, $injector) => {
+            // 拦截所有验证失败的请求,跳转到登录页面
+
+            return {
+                responseError: (rejection) => {
+                    if (rejection.status !== 401) {
+                        return rejection
+                    }
+                    const $state = $injector.get('$state');
+                    const deferred = $q.defer()
+                    $state.go('member.signIn')
+
+                    return deferred.promise;
+                }
+            }
+        })
+
+    })
     .constant('AUTH_EVENTS', {
         loginSuccess: 'auth.login.success',
         loginFailed: 'auth.login.failed',
